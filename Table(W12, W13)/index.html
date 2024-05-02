@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Table Generator</title>
+<style>
+    table {
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+    td {
+        border: 1px solid black;
+        padding: 5px;
+    }
+</style>
+</head>
+<body>
+
+<label for="input1">Enter Table 1 Dimensions:</label>
+<input type="text" id="input1" placeholder="e.g., 3#3#3">
+<br><br>
+<label for="input2">Enter Table 2 Dimensions:</label>
+<input type="text" id="input2" placeholder="e.g., 3#3#2">
+<br><br>
+<button onclick="generateTables()">Generate Tables</button>
+
+<div id="tablesContainer"></div>
+
+<script>
+function generateTables() {
+    var input1 = document.getElementById("input1").value;
+    var input2 = document.getElementById("input2").value;
+
+    var table1 = createTable(input1);
+    var table2 = createTable(input2);
+    var tablesContainer = document.getElementById("tablesContainer");
+    tablesContainer.innerHTML = "";
+    tablesContainer.appendChild(table1);
+    tablesContainer.appendChild(table2);
+
+    var inputArr1 = input1.split("#");
+    var inputArr2 = input2.split("#");
+
+    var commonRows = parseInt(inputArr1[0]);
+    var commonCols = parseInt(inputArr1[1]);
+
+    var firstCellValueTable1 = parseInt(table1.rows[0].cells[0].textContent);
+    var firstCellValueTable2 = parseInt(table2.rows[0].cells[0].textContent);
+
+    var thirdTable = document.createElement("table");
+    var uniqueValues = {}; // Object to store unique values encountered
+    var colorIndex = 0; // Index to assign unique colors
+
+    for (var i = 0; i < commonRows; i++) {
+        var row = thirdTable.insertRow();
+        for (var j = 0; j < commonCols; j++) {
+            var cell = row.insertCell();
+            var value;
+            if (firstCellValueTable1 === firstCellValueTable2) {
+                value = firstCellValueTable1;
+            } else {
+                value = firstCellValueTable1 * firstCellValueTable2;
+            }
+            cell.textContent = value;
+
+            // Assign unique background color for each unique value
+            if (!(value in uniqueValues)) {
+                var color = generateRandomColor();
+                uniqueValues[value] = color;
+                cell.style.backgroundColor = color;
+            } else {
+                cell.style.backgroundColor = uniqueValues[value];
+            }
+
+            firstCellValueTable1++;
+            firstCellValueTable2++;
+        }
+    }
+    tablesContainer.appendChild(thirdTable);
+}
+
+function createTable(input) {
+    var inputArr = input.split("#");
+    var numRows = parseInt(inputArr[0]);
+    var numCols = parseInt(inputArr[1]);
+    var startNumber = parseInt(inputArr[2]);
+
+    var table = document.createElement("table");
+    for (var i = 0; i < numRows; i++) {
+        var row = table.insertRow();
+        for (var j = 0; j < numCols; j++) {
+            var cell = row.insertCell();
+            cell.textContent = startNumber++;
+        }
+    }
+    return table;
+}
+
+function generateRandomColor() {
+    // Generate a random hex color code
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+</script>
+
+</body>
+</html>
